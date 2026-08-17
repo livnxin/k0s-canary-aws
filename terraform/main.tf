@@ -33,18 +33,18 @@ module "vpc" {
 module "ec2" {
   source = "./modules/ec2"
 
-  environment       = var.environment
-  vpc_id            = module.vpc.vpc_id
-  public_subnet_id  = module.vpc.public_subnet_id
-  ssh_ingress_cidr  = var.ssh_ingress_cidr
+  environment      = var.environment
+  vpc_id           = module.vpc.vpc_id
+  public_subnet_id = module.vpc.public_subnet_id
+  ssh_ingress_cidr = var.ssh_ingress_cidr
 
-  instance_type     = var.instance_type
-  fcos_ami_id       = var.fcos_ami_id
-  ssh_key_name      = var.ssh_key_name
-  worker_count = var.worker_count
+  instance_type = var.instance_type
+  fcos_ami_id   = var.fcos_ami_id
+  ssh_key_name  = var.ssh_key_name
+  worker_count  = var.worker_count
 
   controlplane_ignition = data.local_file.controlplane_ignition.content
-  worker_ignition        = data.local_file.worker_ignition.content
+  worker_ignition       = data.local_file.worker_ignition.content
 }
 
 # Ignition JSON is generated from Butane YAML via a local-exec step
