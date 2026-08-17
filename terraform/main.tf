@@ -41,10 +41,6 @@ module "ec2" {
   instance_type     = var.instance_type
   fcos_ami_id       = var.fcos_ami_id
   ssh_key_name      = var.ssh_key_name
-
-  # Set to 0 by default to stay well within the 750 hrs/month free-tier
-  # pool. Bump to 1+ only while actively demoing the canary rollout,
-  # then scale back to 0 and destroy when you're done.
   worker_count = var.worker_count
 
   controlplane_ignition = data.local_file.controlplane_ignition.content
