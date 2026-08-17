@@ -1,0 +1,52 @@
+# This replaces a normal Deployment. Argo Rollouts watches this object
+# and orchestrates the canary steps itself.
+apiVersion: argoproj.io/v1alpha1
+kind: Rollout
+metadata:
+  name: demo-app
+spec:
+  replicas: 4
+  strategy:
+    canary:
+      steps:
+        - setWeight: 25   # 25% of traffic hits the new version
+        - pause: { duration: 60 }  # manual soak time - watch metrics/logs here
+        - setWeight: 50
+        - pause: { duration: 60 }
+        - setWeight: 100  # full rollout, old ReplicaSet scaled down
+  selector:
+    matchLabels:
+      app: demo-app
+  template:
+    metadata:
+      labels:
+        app: demo-app
+    spec:
+      containers:
+        - name: demo-app
+          # Swap this tag between "blue" and "green" builds to trigger
+          # a rollout - see Dockerfile-notes.md for how the two versions
+          # differ (just a background color + version label, on purpose -
+          # the infra is the point, not the app).
+          image: REPLACE_WITH_YOUR_DOCKERHUB_USERNAME/demo-app:blue
+          ports:
+            - containerPort: 80
+          resources:
+            requests:
+              cpu: 50m
+              memory: 32Mi
+            limits:
+              cpu: 100m
+              memory: 64Mi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: demo-app
+spec:
+  selector:
+    app: demo-app
+  ports:
+    - port: 80
+      targetPort: 80
+  type: ClusterIP

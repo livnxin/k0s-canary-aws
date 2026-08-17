@@ -1,0 +1,70 @@
+variant: fcos
+version: 1.5.0
+
+# Workers need a join token generated FROM the control-plane node after
+# it's up (`k0s token create --role=worker`). Since that token doesn't
+# exist until the controlplane has already booted, the clean approach
+# for a portfolio demo is:
+#
+#   1. terraform apply with worker_count = 0, wait for controlplane ready
+#   2. SSH to controlplane, run: k0s token create --role=worker
+#   3. Paste that token into worker-join-token.txt (gitignored, never commit it)
+#   4. terraform apply -var="worker_count=1" - Terraform will read the
+#      token file's contents into this Ignition config via templatefile()
+#      in modules/ec2 (see main.tf comments for the templatefile hook to add)
+#
+# This is a known chicken-and-egg with token-based cluster joins and is
+# worth mentioning explicitly in your README - it's a real operational
+# consideration, not a shortcut you're hiding.
+
+systemd:
+  units:
+    - name: k0s-install.service
+      enabled: true
+      contents: |
+        [Unit]
+        Description=Download and install k0s binary
+        Before=k0s-worker.service
+        ConditionPathExists=!/usr/local/bin/k0s
+
+        [Service]
+        Type=oneshot
+        RemainAfterExit=yes
+        ExecStart=/usr/bin/curl -sSLf https://get.k0s.sh -o /tmp/k0s-install.sh
+        ExecStart=/usr/bin/bash /tmp/k0s-install.sh
+
+        [Install]
+        WantedBy=multi-user.target
+
+    - name: k0s-worker.service
+      enabled: true
+      contents: |
+        [Unit]
+        Description=k0s worker
+        After=k0s-install.service network-online.target
+        Wants=network-online.target
+
+        [Service]
+        Type=simple
+        ExecStart=/usr/local/bin/k0s worker --token-file=/etc/k0s/worker-token
+        Restart=on-failure
+        RestartSec=5
+
+        [Install]
+        WantedBy=multi-user.target
+
+storage:
+  directories:
+    - path: /etc/k0s
+      mode: 0700
+  files:
+    - path: /etc/k0s/worker-token
+      mode: 0600
+      contents:
+        inline: REPLACE_WITH_TOKEN_FROM_CONTROLPLANE
+
+passwd:
+  users:
+    - name: core
+      ssh_authorized_keys:
+        - REPLACE_WITH_YOUR_PUBLIC_SSH_KEY

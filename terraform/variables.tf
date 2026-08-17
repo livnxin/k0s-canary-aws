@@ -1,0 +1,55 @@
+variable "aws_region" {
+  description = "AWS region to deploy into. Pick one close to you for lower latency."
+  type        = string
+  default     = "ap-southeast-1" # Singapore - closest free-tier region to Indonesia
+}
+
+variable "environment" {
+  description = "Short name used to tag/prefix all resources"
+  type        = string
+  default     = "k0s-canary-demo"
+}
+
+variable "vpc_cidr" {
+  description = "CIDR block for the VPC"
+  type        = string
+  default     = "10.20.0.0/16"
+}
+
+variable "instance_type" {
+  description = "EC2 instance type. MUST stay t2.micro or t3.micro to remain free-tier eligible."
+  type        = string
+  default     = "t3.micro"
+
+  validation {
+    condition     = contains(["t2.micro", "t3.micro"], var.instance_type)
+    error_message = "Only t2.micro or t3.micro are free-tier eligible. Do not change this without checking your AWS Billing Free Tier usage page first."
+  }
+}
+
+variable "fcos_ami_id" {
+  description = "Fedora CoreOS AMI ID for your chosen region. Look this up at https://fedoraproject.org/coreos/download (Stable stream, AWS, your region) - it changes per region and per release."
+  type        = string
+  # No default on purpose - you must supply this explicitly per region.
+}
+
+variable "ssh_key_name" {
+  description = "Name of an existing EC2 key pair (for emergency console access; day-to-day management should go through the k0s/kubectl API, not SSH)"
+  type        = string
+}
+
+variable "ssh_ingress_cidr" {
+  description = "CIDR allowed to reach nodes on port 22. Set this to YOUR_IP/32, never 0.0.0.0/0."
+  type        = string
+}
+
+variable "worker_count" {
+  description = "Number of additional worker nodes beyond the single control-plane node. Keep at 0 unless actively demoing - each additional t3.micro running 24/7 eats into the shared 750 hrs/month free-tier pool."
+  type        = number
+  default     = 0
+
+  validation {
+    condition     = var.worker_count <= 2
+    error_message = "Keep worker_count at 2 or fewer - beyond that you risk exceeding the 750 free hours/month even with occasional use."
+  }
+}

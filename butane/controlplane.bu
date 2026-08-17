@@ -1,0 +1,58 @@
+variant: fcos
+version: 1.5.0
+
+# This node runs k0s in single-node "controller+worker" mode by default,
+# meaning it can run the whole demo alone with worker_count = 0.
+# If you scale worker_count up, run `k0s kubeconfig create --enable-worker=false`
+# instead (see the notes in the systemd unit below) so this node stops
+# double-booking as a worker once real workers exist.
+
+systemd:
+  units:
+    - name: k0s-install.service
+      enabled: true
+      contents: |
+        [Unit]
+        Description=Download and install k0s binary
+        Before=k0s-controller.service
+        ConditionPathExists=!/usr/local/bin/k0s
+
+        [Service]
+        Type=oneshot
+        RemainAfterExit=yes
+        ExecStart=/usr/bin/curl -sSLf https://get.k0s.sh -o /tmp/k0s-install.sh
+        ExecStart=/usr/bin/bash /tmp/k0s-install.sh
+
+        [Install]
+        WantedBy=multi-user.target
+
+    - name: k0s-controller.service
+      enabled: true
+      contents: |
+        [Unit]
+        Description=k0s controller (single-node: controller + worker)
+        After=k0s-install.service network-online.target
+        Wants=network-online.target
+
+        [Service]
+        Type=simple
+        # --single tells k0s this controller also schedules workloads,
+        # which is what lets worker_count stay at 0 for the base demo.
+        # Drop --single once you add dedicated worker nodes.
+        ExecStart=/usr/local/bin/k0s controller --single
+        Restart=on-failure
+        RestartSec=5
+
+        [Install]
+        WantedBy=multi-user.target
+
+storage:
+  directories:
+    - path: /var/lib/k0s
+      mode: 0755
+
+passwd:
+  users:
+    - name: core
+      ssh_authorized_keys:
+        - REPLACE_WITH_YOUR_PUBLIC_SSH_KEY
