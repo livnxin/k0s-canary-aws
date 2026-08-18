@@ -45,6 +45,8 @@ module "ec2" {
 
   controlplane_ignition = data.local_file.controlplane_ignition.content
   worker_ignition       = data.local_file.worker_ignition.content
+
+  depends_on = [ module.vpc ]
 }
 
 # Ignition JSON is generated from Butane YAML via a local-exec step

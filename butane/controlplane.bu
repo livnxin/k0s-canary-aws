@@ -1,5 +1,5 @@
 variant: fcos
-version: 1.5.0
+version: 1.7.0
 
 # This node runs k0s in single-node "controller+worker" mode by default,
 # meaning it can run the whole demo alone with worker_count = 0.

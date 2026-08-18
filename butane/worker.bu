@@ -1,5 +1,5 @@
 variant: fcos
-version: 1.5.0
+version: 1.7.0
 
 # Workers need a join token generated FROM the control-plane node after
 # it's up (`k0s token create --role=worker`). Since that token doesn't
