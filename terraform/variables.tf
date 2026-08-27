@@ -10,13 +10,13 @@ variable "aws_environment" {
   default     = "aws-demo"
 }
 
-variable "vpc_cidr" {
+variable "aws_vpc_cidr" {
   description = "CIDR block for the VPC"
   type        = string
   default     = "10.27.0.0/16"
 }
 
-variable "instance_type" {
+variable "aws_instance_type" {
   description = "EC2 instance type. MUST stay t2.micro or t3.micro to remain free-tier eligible."
   type        = string
   default     = "t3.micro"

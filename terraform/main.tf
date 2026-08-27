@@ -26,19 +26,19 @@ provider "aws" {
 module "vpc" {
   source = "./modules/vpc"
 
-  vpc_cidr    = var.vpc_cidr
+  vpc_cidr    = var.aws_vpc_cidr
   environment = var.aws_environment
 }
 
 module "ec2" {
   source = "./modules/ec2"
 
-  environment      = var.environment
+  environment      = var.aws_environment
   vpc_id           = module.vpc.vpc_id
   public_subnet_id = module.vpc.public_subnet_id
   ssh_ingress_cidr = var.ssh_ingress_cidr
 
-  instance_type = var.instance_type
+  instance_type = var.aws_instance_type
   fcos_ami_id   = var.fcos_ami_id
   ssh_key_name  = var.ssh_key_name
   worker_count  = var.worker_count

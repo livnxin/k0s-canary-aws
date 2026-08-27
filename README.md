@@ -24,7 +24,7 @@ Stage 2
 Stage 3
 - Security
 - Observability
-- ML analysis of telemtry and security data
+- ML analysis of telemetry and security data
 
 Stage 4 
 - Active IPS
