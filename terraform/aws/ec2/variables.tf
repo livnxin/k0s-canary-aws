@@ -18,7 +18,7 @@ variable "instance_type" {
   type = string
 }
 
-variable "fcos_ami_id" {
+variable "talos_ami_id" {
   type = string
 }
 

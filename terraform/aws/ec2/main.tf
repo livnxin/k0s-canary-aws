@@ -3,17 +3,22 @@
 # SSH only from your IP, k0s API (9443) and kubelet (10250) only between
 # nodes in this SG, everything else outbound-only.
 
-resource "aws_security_group" "k0s_nodes" {
-  name_prefix = "${var.environment}-k0s-"
+resource "aws_security_group" "talos_control_nodes" {
+  name_prefix = "${var.environment}-talos-control"
   vpc_id      = var.vpc_id
 
-  ingress {
-    description = "SSH - emergency access only"
-    from_port   = 22
-    to_port     = 22
-    protocol    = "tcp"
-    cidr_blocks = [var.ssh_ingress_cidr]
-  }
+
+  ### Uncomment in case of emergency ###
+
+  # ingress {
+  #   description = "SSH - emergency access only"
+  #   from_port   = 22
+  #   to_port     = 22
+  #   protocol    = "tcp"
+  #   cidr_blocks = [var.ssh_ingress_cidr]
+  # }
+
+  ### ###
 
   ingress {
     description = "k0s / Kubernetes API server"
@@ -62,17 +67,12 @@ resource "aws_security_group" "k0s_nodes" {
   }
 }
 
-# --- Control-plane node (always on) ----------------------------------------
-# Runs k0s in single-node mode (controller+worker combined) by default,
-# via k0sctl/systemd unit baked into the FCOS Ignition config.
-# This alone can run the whole demo - workers below are optional extras.
-
 resource "aws_instance" "controlplane" {
-  ami                    = var.fcos_ami_id
+  ami                    = var.talos_ami_id
   instance_type          = var.instance_type
   subnet_id              = var.public_subnet_id
   key_name               = var.ssh_key_name
-  vpc_security_group_ids = [aws_security_group.k0s_nodes.id]
+  vpc_security_group_ids = [aws_security_group.talos_control_nodes.id]
   user_data              = var.controlplane_ignition
 
   # user_data_replace_on_change ensures a Butane/Ignition edit actually
@@ -81,7 +81,7 @@ resource "aws_instance" "controlplane" {
   user_data_replace_on_change = true
 
   root_block_device {
-    volume_size = 15 # well within the 30GB free-tier EBS allowance
+    volume_size = 20 # well within the 30GB free-tier EBS allowance
     volume_type = "gp3"
   }
 
@@ -98,7 +98,7 @@ resource "aws_instance" "controlplane" {
 resource "aws_instance" "worker" {
   count = var.worker_count
 
-  ami                    = var.fcos_ami_id
+  ami                    = var.talos_ami_id
   instance_type          = var.instance_type
   subnet_id              = var.public_subnet_id
   key_name               = var.ssh_key_name

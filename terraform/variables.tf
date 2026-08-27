@@ -1,7 +1,7 @@
 variable "aws_region" {
   description = "AWS region to deploy into. Pick one close to you for lower latency."
   type        = string
-  default     = "ap-southeast-3" # Indonesia
+  default     = "ap-southeast-1" # Singapore
 }
 
 variable "aws_environment" {
@@ -27,10 +27,10 @@ variable "aws_instance_type" {
   }
 }
 
-variable "fcos_ami_id" {
-  description = "Fedora CoreOS AMI ID for your chosen region. Look this up at https://fedoraproject.org/coreos/download (Stable stream, AWS, your region) - it changes per region and per release."
+variable "talos_ami_id" {
+  description = "Talos AMI ID for the region. Default is v.1.13.9 arm64 for Singapore Region"
   type        = string
-  # No default on purpose - you must supply this explicitly per region.
+  default     = "ami-0e652a0ca53b17bc6"
 }
 
 variable "ssh_key_name" {
