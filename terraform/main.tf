@@ -24,14 +24,14 @@ provider "aws" {
 }
 
 module "vpc" {
-  source = "./modules/vpc"
+  source = "./aws/vpc"
 
-  vpc_cidr    = var.aws_vpc_cidr
-  environment = var.aws_environment
+  aws_vpc_cidr = var.aws_vpc_cidr
+  environment  = var.aws_environment
 }
 
 module "ec2" {
-  source = "./modules/ec2"
+  source = "./aws/ec2"
 
   environment       = var.aws_environment
   vpc_id            = module.vpc.vpc_id
@@ -40,12 +40,9 @@ module "ec2" {
   ssh_ingress_cidr  = var.ssh_ingress_cidr
 
   instance_type = var.aws_instance_type
-  fcos_ami_id   = var.fcos_ami_id
+  talos_ami_id  = var.talos_ami_id
   ssh_key_name  = var.ssh_key_name
   worker_count  = var.worker_count
-
-  controlplane_ignition = data.local_file.controlplane_ignition.content
-  worker_ignition       = data.local_file.worker_ignition.content
 
   depends_on = [module.vpc]
 }

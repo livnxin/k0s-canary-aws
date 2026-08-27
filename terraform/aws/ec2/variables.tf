@@ -34,13 +34,3 @@ variable "worker_count" {
   type    = number
   default = 0
 }
-
-variable "controlplane_ignition" {
-  type      = string
-  sensitive = true
-}
-
-variable "worker_ignition" {
-  type      = string
-  sensitive = true
-}

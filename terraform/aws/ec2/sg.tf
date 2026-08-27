@@ -1,3 +1,4 @@
+
 locals {
   control_group_id = aws_security_group.talos_control_nodes.id
   worker_group_id  = aws_security_group.talos_worker_nodes.id
