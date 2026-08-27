@@ -20,4 +20,5 @@ worker-join-token.txt
 .idea/
 .vscode/
 
+LEGACY.md
 !README.md
