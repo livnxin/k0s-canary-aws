@@ -23,6 +23,11 @@ provider "aws" {
   region = var.aws_region
 }
 
+module "talos" {
+  source = "./aws/talos"
+  
+}
+
 module "vpc" {
   source = "./aws/vpc"
 
