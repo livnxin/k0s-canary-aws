@@ -22,7 +22,7 @@ variable "aws_instance_type" {
   default     = "t3.micro"
 
   validation {
-    condition     = contains(["t2.micro", "t3.micro"], var.instance_type)
+    condition     = contains(["t2.micro", "t3.micro"], var.aws_instance_type)
     error_message = "Only t2.micro or t3.micro are free-tier eligible. Do not change this without checking your AWS Billing Free Tier usage page first."
   }
 }
