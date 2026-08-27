@@ -24,7 +24,7 @@ resource "aws_internet_gateway" "aws_gateway" {
 
 resource "aws_subnet" "control" {
   vpc_id                  = aws_vpc.aws_vpc.id
-  cidr_block              = cidrsubnet(var.aws_vpc_cidr, 13, 1)
+  cidr_block              = cidrsubnet(var.aws_vpc_cidr, 8, 1)
   map_public_ip_on_launch = true
   availability_zone       = data.aws_availability_zones.available.names[0]
 
@@ -35,7 +35,7 @@ resource "aws_subnet" "control" {
 
 resource "aws_subnet" "worker" {
   vpc_id                  = aws_vpc.aws_vpc.id
-  cidr_block              = cidrsubnet(var.aws_vpc_cidr, 8, 2)
+  cidr_block              = cidrsubnet(var.aws_vpc_cidr, 8, 0)
   map_public_ip_on_launch = true
   availability_zone       = data.aws_availability_zones.available.names[0]
 

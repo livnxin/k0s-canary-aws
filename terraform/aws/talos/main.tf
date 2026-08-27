@@ -9,7 +9,7 @@ terraform {
 
     talos = {
       source  = "siderolabs/talos"
-      version = "0.11.0"
+      version = "0.12.0-alpha.3"
     }
   }
 
@@ -25,27 +25,24 @@ terraform {
 }
 
 resource "talos_machine_secrets" "aws_machine_secret" {
+  talos_version = "v1.13.7"
 }
 
 
 
-ephemeral "talos_client_configuration" "this" {
-  cluster_name    = "example-cluster"
-  machine_secrets = talos_machine_secrets.aws_machine_secret.machine_secrets
-  nodes           = ["var.controlplane_ip"]
+data "talos_client_configuration" "this" {
+  cluster_name    = var.cluster_name
+  nodes           = [var.controlplane_ip]
+  endpoints = [var.controlplane_ip]
+  client_configuration = talos_machine_secrets.aws_machine_secret.client_configuration
 }
 
-ephemeral "talos_machine_configuration" "this" {
-  cluster_name     = "example-cluster"
-  machine_type     = "controlplane"
-  cluster_endpoint = "https://cluster.local:6443"
-  machine_secrets  = talos_machine_secrets.aws_machine_secret.machine_secrets
-}
-
-data "talos_machine_configuration" "controller" {
+data "talos_machine_configuration" "control" {
   cluster_name     = var.cluster_name
   cluster_endpoint = local.cluster_endpoint
   machine_secrets  = talos_machine_secrets.aws_machine_secret.machine_secrets
+
+  talos_version = "v1.13.7"
   machine_type     = "controlplane"
   examples         = false
   docs             = false
@@ -80,8 +77,30 @@ data "talos_machine_configuration" "worker" {
   cluster_name     = var.cluster_name
   cluster_endpoint = local.cluster_endpoint
   machine_secrets  = talos_machine_secrets.aws_machine_secret.machine_secrets
+  talos_version = "v1.13.7"
   machine_type     = "worker"
   examples         = false
   docs             = false
   config_patches   = [for c in local.common_machine_configs : yamlencode(c)]
+}
+
+
+
+resource "talos_machine_configuration_apply" "control" {
+  client_configuration        = data.talos_client_configuration.this.client_configuration
+  machine_configuration_input = data.talos_machine_configuration.control.machine_configuration
+  node                        = var.controlplane_ip
+
+  endpoint = var.controlplane_ip
+}
+
+
+
+resource "talos_machine_bootstrap" "control" {
+  depends_on = [
+    talos_machine_configuration_apply.control
+  ]
+  endpoint = var.controlplane_ip
+  node                 = var.controlplane_ip
+  client_configuration = data.talos_client_configuration.this.client_configuration
 }

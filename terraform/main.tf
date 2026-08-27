@@ -12,7 +12,6 @@ terraform {
 }
 
 provider "aws" {
-  region = var.aws_region
 }
 
 module "talos" {
@@ -20,6 +19,8 @@ module "talos" {
 
   worker_ips      = module.ec2.worker_public_ips
   controlplane_ip = module.ec2.controlplane_public_ip
+
+  depends_on = [ module.ec2 ]
 
 }
 
@@ -38,6 +39,7 @@ module "ec2" {
   control_subnet_id = module.vpc.control_subnet_id
   worker_subnet_id  = module.vpc.worker_subnet_id
   ssh_ingress_cidr  = var.ssh_ingress_cidr
+  ssh_ingress_cidr6 = var.ssh_ingress_cidr6
 
   instance_type = var.aws_instance_type
   talos_ami_id  = var.talos_ami_id
@@ -47,12 +49,7 @@ module "ec2" {
   depends_on = [module.vpc]
 }
 
-# Ignition JSON is generated from Butane YAML via a local-exec step
-# (see butane/README.md). We just read the compiled output here.
-data "local_file" "controlplane_ignition" {
-  filename = "${path.module}/../butane/controlplane.ign"
-}
-
-data "local_file" "worker_ignition" {
-  filename = "${path.module}/../butane/worker.ign"
+output "talos_client" {
+  value = module.talos.talos_client
+  sensitive = true
 }

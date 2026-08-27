@@ -5,6 +5,7 @@ data "helm_template" "cilium" {
   chart      = "cilium"
   # renovate: datasource=helm depName=cilium registryUrl=https://helm.cilium.io
   version      = "1.19.4"
+  kube_version = "1.21.0"
   api_versions = []
   set = [
     {

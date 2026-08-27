@@ -18,6 +18,10 @@ variable "ssh_ingress_cidr" {
   type = string
 }
 
+variable "ssh_ingress_cidr6" {
+  type        = string
+}
+
 variable "instance_type" {
   type = string
 }

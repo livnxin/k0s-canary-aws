@@ -3,7 +3,7 @@ resource "aws_instance" "controlplane" {
   instance_type          = var.instance_type
   subnet_id              = var.control_subnet_id
   key_name               = var.ssh_key_name
-  vpc_security_group_ids = [local.worker_group_id]
+  vpc_security_group_ids = [local.control_group_id]
 
   root_block_device {
     volume_size = 20 # well within the 30GB free-tier EBS allowance

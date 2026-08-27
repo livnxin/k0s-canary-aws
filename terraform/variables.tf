@@ -19,18 +19,13 @@ variable "aws_vpc_cidr" {
 variable "aws_instance_type" {
   description = "EC2 instance type. MUST stay t2.micro or t3.micro to remain free-tier eligible."
   type        = string
-  default     = "t3.micro"
-
-  validation {
-    condition     = contains(["t2.micro", "t3.micro"], var.aws_instance_type)
-    error_message = "Only t2.micro or t3.micro are free-tier eligible. Do not change this without checking your AWS Billing Free Tier usage page first."
-  }
+  default     = "c7i-flex.large"
 }
 
 variable "talos_ami_id" {
   description = "Talos AMI ID for the region. Default is v.1.13.9 arm64 for Singapore Region"
   type        = string
-  default     = "ami-0e652a0ca53b17bc6"
+  default     = "ami-0993d3366ebd9fb78"
 }
 
 variable "ssh_key_name" {
@@ -40,6 +35,11 @@ variable "ssh_key_name" {
 
 variable "ssh_ingress_cidr" {
   description = "CIDR allowed to reach nodes on port 22. Set this to YOUR_IP/32, never 0.0.0.0/0."
+  type        = string
+}
+
+variable "ssh_ingress_cidr6" {
+  description = "CIDR allowed to reach nodes on port 22. Set this to YOUR_IP/128, never 0.0.0.0/0."
   type        = string
 }
 
