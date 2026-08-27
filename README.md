@@ -15,6 +15,7 @@ Stage 1
 - Deploy a single k8s cluster on AWS
 - A/B testing of two models
 - storage of prediction result and metadata in S3 as data lake
+- Basic Security with Layer 4 Security Group to comply with the principle of least privilege. Only open ports when necessary and only to the right connection
 
 Stage 2
 - Add frontend

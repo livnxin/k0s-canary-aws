@@ -1,8 +1,3 @@
-# --- Security group -------------------------------------------------------
-# One shared SG for all k0s nodes. Rules are intentionally scoped tight:
-# SSH only from your IP, k0s API (9443) and kubelet (10250) only between
-# nodes in this SG, everything else outbound-only.
-
 locals {
   control_group_id = aws_security_group.talos_control_nodes.id
   worker_group_id  = aws_security_group.talos_worker_nodes.id
