@@ -40,10 +40,6 @@ data "helm_template" "cilium" {
       value = "true"
     },
     {
-      name  = "l2announcements.enabled"
-      value = "true"
-    },
-    {
       name  = "devices"
       value = "{eth0}"
     },

@@ -1,5 +1,5 @@
 variable "controlplane_ip" {
-    type = string
+  type = string
 }
 
 variable "worker_ips" {

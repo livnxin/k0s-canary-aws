@@ -30,9 +30,9 @@ data "talos_machine_secrets" "aws_machine_secret" {
 
 
 ephemeral "talos_client_configuration" "this" {
-  cluster_name         = "example-cluster"
+  cluster_name    = "example-cluster"
   machine_secrets = data.talos_machine_secrets.aws_machine_secret.machine_secrets
-  nodes                = ["var.controlplane_ip"]
+  nodes           = ["var.controlplane_ip"]
 }
 
 ephemeral "talos_machine_configuration" "this" {
@@ -43,12 +43,12 @@ ephemeral "talos_machine_configuration" "this" {
 }
 
 data "talos_machine_configuration" "controller" {
-  cluster_name       = var.cluster_name
-  cluster_endpoint   = var.cluster_endpoint
-  machine_secrets    = talos_machine_secrets.talos.machine_secrets
-  machine_type       = "controlplane"
-  examples           = false
-  docs               = false
+  cluster_name     = var.cluster_name
+  cluster_endpoint = var.cluster_endpoint
+  machine_secrets  = talos_machine_secrets.talos.machine_secrets
+  machine_type     = "controlplane"
+  examples         = false
+  docs             = false
   config_patches = concat(
     [for c in local.common_machine_configs : yamlencode(c)],
     [
@@ -77,13 +77,11 @@ data "talos_machine_configuration" "controller" {
 
 // see https://registry.terraform.io/providers/siderolabs/talos/0.11.0/docs/data-sources/machine_configuration
 data "talos_machine_configuration" "worker" {
-  cluster_name       = var.cluster_name
-  cluster_endpoint   = var.cluster_endpoint
-  machine_secrets    = talos_machine_secrets.talos.machine_secrets
-  machine_type       = "worker"
-  talos_version      = "v${var.talos_version}"
-  kubernetes_version = var.kubernetes_version
-  examples           = false
-  docs               = false
-  config_patches     = [for c in local.common_machine_configs : yamlencode(c)]
+  cluster_name     = var.cluster_name
+  cluster_endpoint = var.cluster_endpoint
+  machine_secrets  = talos_machine_secrets.talos.machine_secrets
+  machine_type     = "worker"
+  examples         = false
+  docs             = false
+  config_patches   = [for c in local.common_machine_configs : yamlencode(c)]
 }

@@ -8,15 +8,7 @@ terraform {
     }
   }
 
-  # Uncomment after bootstrapping the state backend module once
-  # (chicken-and-egg problem: the backend itself can't use remote state).
-  # backend "s3" {
-  #   bucket         = ""
-  #   key            = "k0s-canary/terraform.tfstate"
-  #   region         = ""
-  #   dynamodb_table = ""
-  #   encrypt        = true
-  # }
+
 }
 
 provider "aws" {
