@@ -57,8 +57,13 @@ resource "aws_route_table" "public" {
   }
 }
 
-resource "aws_route_table_association" "public" {
-  subnet_id      = aws_subnet.public.id
+resource "aws_route_table_association" "control" {
+  subnet_id      = aws_subnet.control.id
+  route_table_id = aws_route_table.public.id
+}
+
+resource "aws_route_table_association" "worker" {
+  subnet_id      = aws_subnet.worker.id
   route_table_id = aws_route_table.public.id
 }
 

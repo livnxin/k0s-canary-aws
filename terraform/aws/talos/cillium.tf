@@ -60,6 +60,14 @@ data "helm_template" "cilium" {
       value = "false"
     },
     {
+      name  = "ingressController.service.type"
+      value = "NodePort"
+    },
+    {
+      name  = "ingressController.service.secureNodePort"
+      value = "30443"
+    },
+    {
       name  = "envoy.enabled"
       value = "true"
     },

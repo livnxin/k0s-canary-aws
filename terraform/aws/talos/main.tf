@@ -24,14 +24,14 @@ terraform {
   # }
 }
 
-data "talos_machine_secrets" "aws_machine_secret" {
+resource "talos_machine_secrets" "aws_machine_secret" {
 }
 
 
 
 ephemeral "talos_client_configuration" "this" {
   cluster_name    = "example-cluster"
-  machine_secrets = data.talos_machine_secrets.aws_machine_secret.machine_secrets
+  machine_secrets = talos_machine_secrets.aws_machine_secret.machine_secrets
   nodes           = ["var.controlplane_ip"]
 }
 
@@ -39,13 +39,13 @@ ephemeral "talos_machine_configuration" "this" {
   cluster_name     = "example-cluster"
   machine_type     = "controlplane"
   cluster_endpoint = "https://cluster.local:6443"
-  machine_secrets  = data.talos_machine_secrets.this.machine_secrets
+  machine_secrets  = talos_machine_secrets.aws_machine_secret.machine_secrets
 }
 
 data "talos_machine_configuration" "controller" {
   cluster_name     = var.cluster_name
-  cluster_endpoint = var.cluster_endpoint
-  machine_secrets  = talos_machine_secrets.talos.machine_secrets
+  cluster_endpoint = local.cluster_endpoint
+  machine_secrets  = talos_machine_secrets.aws_machine_secret.machine_secrets
   machine_type     = "controlplane"
   examples         = false
   docs             = false
@@ -78,8 +78,8 @@ data "talos_machine_configuration" "controller" {
 // see https://registry.terraform.io/providers/siderolabs/talos/0.11.0/docs/data-sources/machine_configuration
 data "talos_machine_configuration" "worker" {
   cluster_name     = var.cluster_name
-  cluster_endpoint = var.cluster_endpoint
-  machine_secrets  = talos_machine_secrets.talos.machine_secrets
+  cluster_endpoint = local.cluster_endpoint
+  machine_secrets  = talos_machine_secrets.aws_machine_secret.machine_secrets
   machine_type     = "worker"
   examples         = false
   docs             = false
