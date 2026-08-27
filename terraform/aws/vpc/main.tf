@@ -14,8 +14,8 @@ resource "aws_vpc" "aws_vpc" {
   }
 }
 
-resource "aws_internet_gateway" "this" {
-  vpc_id = aws_vpc.this.id
+resource "aws_internet_gateway" "aws_gateway" {
+  vpc_id = aws_vpc.aws_vpc.id
 
   tags = {
     Name = "${var.environment}-igw"
@@ -23,8 +23,8 @@ resource "aws_internet_gateway" "this" {
 }
 
 resource "aws_subnet" "public" {
-  vpc_id                  = aws_vpc.this.id
-  cidr_block              = cidrsubnet(var.vpc_cidr, 8, 1)
+  vpc_id                  = aws_vpc.aws_vpc.id
+  cidr_block              = cidrsubnet(var.aws_vpc_cidr, 8, 1)
   map_public_ip_on_launch = true
   availability_zone       = data.aws_availability_zones.available.names[0]
 
@@ -34,11 +34,11 @@ resource "aws_subnet" "public" {
 }
 
 resource "aws_route_table" "public" {
-  vpc_id = aws_vpc.this.id
+  vpc_id = aws_vpc.aws_vpc.id
 
   route {
     cidr_block = "0.0.0.0/0"
-    gateway_id = aws_internet_gateway.this.id
+    gateway_id = aws_internet_gateway.aws_gateway.id
   }
 
   tags = {
