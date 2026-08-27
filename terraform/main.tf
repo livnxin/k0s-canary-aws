@@ -33,10 +33,11 @@ module "vpc" {
 module "ec2" {
   source = "./modules/ec2"
 
-  environment      = var.aws_environment
-  vpc_id           = module.vpc.vpc_id
-  public_subnet_id = module.vpc.public_subnet_id
-  ssh_ingress_cidr = var.ssh_ingress_cidr
+  environment       = var.aws_environment
+  vpc_id            = module.vpc.vpc_id
+  control_subnet_id = module.vpc.control_subnet_id
+  worker_subnet_id  = module.vpc.worker_subnet_id
+  ssh_ingress_cidr  = var.ssh_ingress_cidr
 
   instance_type = var.aws_instance_type
   fcos_ami_id   = var.fcos_ami_id

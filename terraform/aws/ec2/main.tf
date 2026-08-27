@@ -63,14 +63,14 @@ resource "aws_security_group" "talos_control_nodes" {
   }
 
   tags = {
-    Name = "${var.environment}-k0s-sg"
+    Name = "${var.environment}-control-talos-sg"
   }
 }
 
 resource "aws_instance" "controlplane" {
   ami                    = var.talos_ami_id
   instance_type          = var.instance_type
-  subnet_id              = var.public_subnet_id
+  subnet_id              = var.control_subnet_id
   key_name               = var.ssh_key_name
   vpc_security_group_ids = [aws_security_group.talos_control_nodes.id]
   user_data              = var.controlplane_ignition
@@ -100,7 +100,7 @@ resource "aws_instance" "worker" {
 
   ami                    = var.talos_ami_id
   instance_type          = var.instance_type
-  subnet_id              = var.public_subnet_id
+  subnet_id              = var.worker_subnet_id
   key_name               = var.ssh_key_name
   vpc_security_group_ids = [aws_security_group.k0s_nodes.id]
   user_data              = var.worker_ignition

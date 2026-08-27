@@ -46,7 +46,7 @@ variable "ssh_ingress_cidr" {
 variable "worker_count" {
   description = "Number of additional worker nodes beyond the single control-plane node. Keep at 0 unless actively demoing - each additional t3.micro running 24/7 eats into the shared 750 hrs/month free-tier pool."
   type        = number
-  default     = 0
+  default     = 2
 
   # validation {
   #   condition     = var.worker_count <= 2
