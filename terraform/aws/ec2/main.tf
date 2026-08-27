@@ -1,72 +1,3 @@
-# --- Security group -------------------------------------------------------
-# One shared SG for all k0s nodes. Rules are intentionally scoped tight:
-# SSH only from your IP, k0s API (9443) and kubelet (10250) only between
-# nodes in this SG, everything else outbound-only.
-
-resource "aws_security_group" "talos_control_nodes" {
-  name_prefix = "${var.environment}-talos-control"
-  vpc_id      = var.vpc_id
-
-
-  ### Uncomment in case of emergency ###
-
-  # ingress {
-  #   description = "SSH - emergency access only"
-  #   from_port   = 22
-  #   to_port     = 22
-  #   protocol    = "tcp"
-  #   cidr_blocks = [var.ssh_ingress_cidr]
-  # }
-
-  ### ###
-
-  ingress {
-    description = "k0s / Kubernetes API server"
-    from_port   = 6443
-    to_port     = 6443
-    protocol    = "tcp"
-    cidr_blocks = [var.ssh_ingress_cidr]
-  }
-
-  # Node-to-node traffic (kubelet, etcd if multi-controlplane later,
-  # pod networking). Scoped to itself via self=true, not 0.0.0.0/0.
-  ingress {
-    description = "Inter-node cluster traffic"
-    from_port   = 0
-    to_port     = 65535
-    protocol    = "tcp"
-    self        = true
-  }
-
-  ingress {
-    description = "Inter-node UDP (VXLAN/wireguard overlay, depending on CNI)"
-    from_port   = 0
-    to_port     = 65535
-    protocol    = "udp"
-    self        = true
-  }
-
-  # Demo app HTTP access so you can actually see the canary in a browser
-  ingress {
-    description = "Demo app HTTP"
-    from_port   = 80
-    to_port     = 80
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  egress {
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  tags = {
-    Name = "${var.environment}-control-talos-sg"
-  }
-}
-
 resource "aws_instance" "controlplane" {
   ami                    = var.talos_ami_id
   instance_type          = var.instance_type
@@ -108,7 +39,7 @@ resource "aws_instance" "worker" {
   user_data_replace_on_change = true
 
   root_block_device {
-    volume_size = 15
+    volume_size = 20
     volume_type = "gp3"
   }
 
