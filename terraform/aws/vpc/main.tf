@@ -4,8 +4,8 @@
 # Since our nodes only need outbound internet for pulling images/updates,
 # a public subnet + IGW + public IP per instance is enough and free.
 
-resource "aws_vpc" "this" {
-  cidr_block           = var.vpc_cidr
+resource "aws_vpc" "aws_vpc" {
+  cidr_block           = var.aws_vpc_cidr
   enable_dns_support   = true
   enable_dns_hostnames = true
 

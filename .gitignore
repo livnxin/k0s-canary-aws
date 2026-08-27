@@ -19,3 +19,5 @@ worker-join-token.txt
 .DS_Store
 .idea/
 .vscode/
+
+!README.md

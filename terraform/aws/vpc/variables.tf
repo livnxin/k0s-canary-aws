@@ -1,4 +1,4 @@
-variable "vpc_cidr" {
+variable "aws_vpc_cidr" {
   type = string
 }
 

@@ -1,13 +1,13 @@
 variable "aws_region" {
   description = "AWS region to deploy into. Pick one close to you for lower latency."
   type        = string
-  default     = "ap-southeast-1" # Singapore - closest free-tier region to Indonesia
+  default     = "ap-southeast-3" # Indonesia
 }
 
-variable "environment" {
+variable "aws_environment" {
   description = "Short name used to tag/prefix all resources"
   type        = string
-  default     = "k0s-canary-demo"
+  default     = "aws-demo"
 }
 
 variable "vpc_cidr" {
@@ -48,8 +48,8 @@ variable "worker_count" {
   type        = number
   default     = 0
 
-  validation {
-    condition     = var.worker_count <= 2
-    error_message = "Keep worker_count at 2 or fewer - beyond that you risk exceeding the 750 free hours/month even with occasional use."
-  }
+  # validation {
+  #   condition     = var.worker_count <= 2
+  #   error_message = "Keep worker_count at 2 or fewer to keep cost down"
+  # }
 }

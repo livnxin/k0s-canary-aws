@@ -27,7 +27,7 @@ module "vpc" {
   source = "./modules/vpc"
 
   vpc_cidr    = var.vpc_cidr
-  environment = var.environment
+  environment = var.aws_environment
 }
 
 module "ec2" {
