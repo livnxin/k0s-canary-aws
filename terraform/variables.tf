@@ -17,19 +17,19 @@ variable "aws_vpc_cidr" {
 }
 
 variable "aws_instance_type" {
-  description = "EC2 instance type. MUST stay t2.micro or t3.micro to remain free-tier eligible."
+  description = "EC2 instance type."
   type        = string
   default     = "c7i-flex.large"
 }
 
 variable "talos_ami_id" {
-  description = "Talos AMI ID for the region. Default is v.1.13.9 arm64 for Singapore Region"
+  description = "Talos AMI ID for the region. Default is v.1.13.7 amd64 for Singapore Region"
   type        = string
   default     = "ami-0993d3366ebd9fb78"
 }
 
 variable "ssh_key_name" {
-  description = "Name of an existing EC2 key pair (for emergency console access; day-to-day management should go through the k0s/kubectl API, not SSH)"
+  description = "Name of an existing EC2 key pair (for emergency console access; day-to-day management should go through the talosctl/kubectl API, not SSH)"
   type        = string
 }
 
@@ -44,7 +44,7 @@ variable "ssh_ingress_cidr6" {
 }
 
 variable "worker_count" {
-  description = "Number of additional worker nodes beyond the single control-plane node. Keep at 0 unless actively demoing - each additional t3.micro running 24/7 eats into the shared 750 hrs/month free-tier pool."
+  description = "Number of additional worker nodes beyond the single control-plane node. Keep at 0 unless actively demo due to budget cons"
   type        = number
   default     = 0
 
