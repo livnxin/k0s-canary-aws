@@ -2,6 +2,7 @@
 locals {
   control_group_id = aws_security_group.talos_control_nodes.id
   worker_group_id  = aws_security_group.talos_worker_nodes.id
+  cillium_group_id = aws_security_group.cillium_nodes.id
 }
 
 resource "aws_security_group" "talos_control_nodes" {
@@ -19,6 +20,15 @@ resource "aws_security_group" "talos_worker_nodes" {
 
   tags = {
     Name = "${var.environment}-worker-talos-sg"
+  }
+}
+
+resource "aws_security_group" "cillium_nodes" {
+  name_prefix = "${var.environment}-cillium"
+  vpc_id      = var.vpc_id
+
+  tags = {
+    Name = "${var.environment}-cillium-sg"
   }
 }
 
@@ -173,3 +183,27 @@ resource "aws_vpc_security_group_ingress_rule" "apid_master6" {
   description = "Talos apid to provide for Talosctl access. Based on v1.13 documentation https://docs.siderolabs.com/talos/v1.13/learn-more/talos-network-connectivity"
 }
 ## Worker Plane Security Group ##
+
+## Cillium Security Group ##
+
+resource "aws_vpc_security_group_ingress_rule" "cillium_healthcheck" {
+  security_group_id = local.cillium_group_id
+
+  referenced_security_group_id = local.cillium_group_id
+  from_port   = 4240
+  ip_protocol = "tcp"
+  to_port     = 4240
+
+  description = "Cillium Health Check. An alternative to ICMP 8/0"
+}
+
+resource "aws_vpc_security_group_ingress_rule" "cillium_vxlan" {
+  security_group_id = local.cillium_group_id
+
+  referenced_security_group_id = local.cillium_group_id
+  from_port   = 8472
+  ip_protocol = "udp"
+  to_port     = 8472
+
+  description = "Cillium VXLAN"
+}
